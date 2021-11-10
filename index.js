@@ -29,6 +29,14 @@ async function run() {
             res.send(result);
         })
 
+        // get services
+        app.get('/services', async (req, res) => {
+            const cursor = servicesCollection.find({});
+            const result = await cursor.toArray();
+            console.log(result);
+            res.send(result);
+        })
+
         // password user update
         app.post('/users', async (req, res) => {
             const user = req.body;

@@ -21,6 +21,14 @@ async function run() {
         const usersCollection = database.collection('users');
         console.log('database connected');
 
+        // add a service
+        app.post('/services', async (req, res) => {
+            const service = req.body;
+            const result = await servicesCollection.insertOne(service);
+            console.log(result);
+            res.send(result);
+        })
+
         // password user update
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -38,11 +46,12 @@ async function run() {
             res.send(result);
         });
 
+        // make admin
         app.put('/users/admin', async (req, res) => {
             const user = req.body;
             console.log(user);
             const filter = { email: user.email }
-            const updateDoc = { $set: {role: 'admin'}};
+            const updateDoc = { $set: { role: 'admin' } };
             const result = await usersCollection.updateOne(filter, updateDoc);
             res.send(result);
         })

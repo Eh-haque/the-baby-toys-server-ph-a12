@@ -18,6 +18,7 @@ async function run() {
         await client.connect();
         const database = client.db('assignment_12');
         const servicesCollection = database.collection('services');
+        const ordersCollection = database.collection('orders');
         const usersCollection = database.collection('users');
         console.log('database connected');
 
@@ -42,6 +43,14 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await servicesCollection.findOne(query);
+            res.send(result);
+        })
+
+        // add a order
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+            console.log(result);
             res.send(result);
         })
 

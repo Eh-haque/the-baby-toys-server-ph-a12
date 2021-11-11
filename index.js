@@ -108,7 +108,7 @@ async function run() {
         // delete a service
         app.delete('/delete_service/:id', async (req, res) => {
             const filter = { _id: ObjectId(req.params.id) };
-            const result = await ordersCollection.deleteOne(filter);
+            const result = await servicesCollection.deleteOne(filter);
             res.send(result);
         });
 

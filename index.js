@@ -54,6 +54,14 @@ async function run() {
             res.send(result);
         })
 
+        // get all order
+        app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            console.log(result);
+            res.send(result);
+        })
+
         // password user update
         app.post('/users', async (req, res) => {
             const user = req.body;

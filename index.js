@@ -19,6 +19,7 @@ async function run() {
         const servicesCollection = database.collection('services');
         const ordersCollection = database.collection('orders');
         const usersCollection = database.collection('users');
+        const reviewsCollection = database.collection('reviews');
         console.log('database connected');
 
         // add a service
@@ -53,11 +54,27 @@ async function run() {
             res.send(result);
         })
 
+        // add a review
+        app.post('/reviews', async (req, res) => {
+            const order = req.body;
+            const result = await reviewsCollection.insertOne(order);
+            // console.log(result);
+            res.send(result);
+        })
+
         // get all order
         app.get('/orders', async (req, res) => {
             const cursor = ordersCollection.find({});
             const result = await cursor.toArray();
-            console.log(result);
+            // console.log(result);
+            res.send(result);
+        });
+
+        // get all review
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const result = await cursor.toArray();
+            // console.log(result);
             res.send(result);
         });
 

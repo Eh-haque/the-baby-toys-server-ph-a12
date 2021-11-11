@@ -105,6 +105,13 @@ async function run() {
             res.send(result);
         });
 
+        // delete a service
+        app.delete('/delete_service/:id', async (req, res) => {
+            const filter = { _id: ObjectId(req.params.id) };
+            const result = await ordersCollection.deleteOne(filter);
+            res.send(result);
+        });
+
         // make admin
          app.put('/users/admin', async (req, res) => {
              const user = req.body;

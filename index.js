@@ -11,7 +11,6 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.ryljg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-console.log(uri);
 
 async function run() {
     try {
@@ -60,7 +59,7 @@ async function run() {
             const result = await cursor.toArray();
             console.log(result);
             res.send(result);
-        })
+        });
 
         // password user update
         app.post('/users', async (req, res) => {
@@ -69,7 +68,7 @@ async function run() {
             res.json(result);
         });
 
-        // email user update
+        // email user update to database
         app.put('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user.email };
@@ -79,15 +78,59 @@ async function run() {
             res.send(result);
         });
 
-        // make admin
-        app.put('/users/admin', async (req, res) => {
-            const user = req.body;
-            console.log(user);
-            const filter = { email: user.email }
-            const updateDoc = { $set: { role: 'admin' } };
-            const result = await usersCollection.updateOne(filter, updateDoc);
+        // check admin status
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.send({ admin: isAdmin });
+        });
+
+        // update order status
+        app.put('/update_status/:id', async (req, res) => {
+            const filter = { _id: ObjectId(req.params.id) };
+            const updateDoc = { $set: { status: req.body.status } };
+            const result = await ordersCollection.updateOne(filter, updateDoc);
             res.send(result);
-        })
+        });
+
+        // delete a order
+        app.delete('/delete_order/:id', async (req, res) => {
+            const filter = { _id: ObjectId(req.params.id) };
+            const result = await ordersCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+        // make admin
+         app.put('/users/admin', async (req, res) => {
+             const user = req.body;
+             const filter = { email: user.email }
+             const updateDoc = { $set: { role: 'admin' } };
+             const result = await usersCollection.updateOne(filter, updateDoc);
+             res.send(result);
+         });
+         
+        // make admin
+       /*  app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email }
+
+            const find = await usersCollection.find(filter).toArray();
+            if (find) {
+                const updateDoc = { $set: { role: 'admin' } };
+                const result = await usersCollection.updateOne(filter, updateDoc)
+                console.log(result);
+                res.send(result);
+            }
+            else {
+                res.send(401)
+            }
+            console.log(find);
+        }); */
 
     }
     finally {
